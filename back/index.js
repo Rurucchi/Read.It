@@ -26,12 +26,10 @@ const usermodel = mongoose.model("username", user);
 
 // routes
 
-app.get("/", (req, res) => {
-  let username = req.query.name;
-  return res.send(`username : ${username}`);
-});
-
-
+// app.get("/", (req, res) => {
+//   let username = req.query.name;
+//   return res.send(`username : ${username}`);
+// });
 
 app.post("/signin", async (req, res) => {
   //create user
@@ -56,15 +54,14 @@ app.post("/signin", async (req, res) => {
   return res.send(`created ${username}!`);
 });
 
-app.post("/login", async, (req, res) => {
+app.get("/login", (req, res) => {
   const user = new usermodel({
     name: req.body.username,
     password: req.body.password,
     mail: req.body.mail,
-    
   });
 
-    try {
+  try {
       user.findOne
     await user.save();
   } catch (error) {
@@ -72,22 +69,39 @@ app.post("/login", async, (req, res) => {
   }
 });
 
+// ----------------------------- Posts CRUD -----------------------------------
 
-
-// Posts CRUD
-
-const post = mongoose.Schema({
+const publication = mongoose.Schema({
   user: String,
-  title : String,
-  topic : String,
-  create : Date,
-  content : String,
-  embed : String,
-  votes : Number
+  title: String,
+  topic: String,
+  create: String,
+  content: String,
+  embed: String,
+  votes: String,
 });
 
-app.post("/post", async, (req, res) => {
-  const post = new 
+const postmodel = mongoose.model("post", publication);
+
+app.post("/newpost", async (req, res) => {
+  const post = new postmodel({
+    id: req.body.id,
+    user: req.body.user,
+    title: req.body.title,
+    topic: req.body.topic,
+    create: req.body.date,
+    content: req.body.content,
+    embed: req.body.embed,
+    votes: req.body.votes,
+  });
+
+  try {
+    await post.save();
+  } catch (error) {
+    console.log(error);
+  }
+
+  return res.send("Post sent!");
 });
 
 // do not touch
