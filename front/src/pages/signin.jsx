@@ -1,5 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const SignIn = () => {
   // Usestates
@@ -9,7 +10,7 @@ const SignIn = () => {
 
   const handleChange = (e) => {
     e.preventDefault();
-    fetch("http://localhost:4000", {
+    fetch("http://localhost:4000/signin", {
       // Adding method type
       method: "POST",
 
@@ -40,8 +41,6 @@ const SignIn = () => {
     setMail(e.target.value);
   };
 
-
-
   // HTML
   return (
     <div className="App">
@@ -55,10 +54,16 @@ const SignIn = () => {
               onChange={changeName}
             ></input>
             <input
-              type="text"
+              type="password"
               placeholder="password"
               value={password}
               onChange={changePassword}
+            ></input>
+            <input
+              type="password"
+              placeholder="confirm password"
+              value={password2}
+              onChange={changePassword2}
             ></input>
             <input
               type="text"
@@ -67,8 +72,11 @@ const SignIn = () => {
               onChange={changeMail}
             ></input>
 
-            <button onClick={handleChange}>Submit</button>
+            <button onClick={handleChange}>Register</button>
           </form>
+        </div>
+        <div>
+          <p>Alredy have an account?</p>
         </div>
       </header>
     </div>
