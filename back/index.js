@@ -54,20 +54,20 @@ app.post("/signin", async (req, res) => {
   return res.send(`created ${username}!`);
 });
 
-app.get("/login", (req, res) => {
-  const user = new usermodel({
-    name: req.body.username,
-    password: req.body.password,
-    mail: req.body.mail,
-  });
+// app.get("/login", async (req, res) => {
+//   const user = new usermodel({
+//     name: req.body.username,
+//     password: req.body.password,
+//     mail: req.body.mail,
+//   });
 
-  try {
-      user.findOne
-    await user.save();
-  } catch (error) {
-    console.log(error);
-  }
-});
+//   try {
+//       // user.findOne();
+//     await user.save();
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
 
 // ----------------------------- Posts CRUD -----------------------------------
 
@@ -83,6 +83,21 @@ const publication = mongoose.Schema({
 
 const postmodel = mongoose.model("post", publication);
 
+// ------------- READ POST
+app.get("/post/:id", async (req, res) => {
+  let post;
+
+  try {
+    post = await postmodel.findById(req.params.id).exec();
+    return res.send(post);
+  } catch (error) {
+    console.log(error);
+    return res.send("query unsucessfull!!!!");
+  }
+});
+
+// ------------- CREATE POST
+
 app.post("/newpost", async (req, res) => {
   const post = new postmodel({
     id: req.body.id,
@@ -93,6 +108,9 @@ app.post("/newpost", async (req, res) => {
     content: req.body.content,
     embed: req.body.embed,
     votes: req.body.votes,
+    // TODO : edit votes system : request breaks the vote system
+    //
+    // TODO : edit usersytem : implement token to fetch and secure the thing
   });
 
   try {
@@ -102,6 +120,56 @@ app.post("/newpost", async (req, res) => {
   }
 
   return res.send("Post sent!");
+});
+
+// --------- PUT (EDIT) POST
+
+app.put("/postedit", async (req, res) => {
+  // changes enabled :
+  // title
+  // topic
+  // content
+  // embed
+
+  // id: req.body.id,
+  // user: req.body.user,
+  // title: req.body.title,
+  // topic: req.body.topic,
+  // create: req.body.date,
+  // content: req.body.content,
+  // embed: req.body.embed,
+  // votes: req.body.votes,
+
+  // TODO : when implemented, match user token in request and in database to guarantee security
+
+  try {
+    const post = await postmodel.findById(req.body.id).exec();
+    console.log(post);
+
+    // changing values in db
+
+    post.title = req.body.title;
+    post.topic = req.body.topic;
+    post.content = req.body.content;
+    post.embed = req.body.embed;
+
+    await post.save();
+  } catch (error) {
+    console.log(error);
+  }
+
+  return res.send("Post successfully changed!");
+});
+
+// ---------- DELETE POST
+
+app.delete("/postdelete", async (req, res) => {
+  try {
+    await postmodel.findByIdAndDelete(req.query.id).exec();
+  } catch (error) {
+    console.log(error);
+  }
+  return res.status(200).send("Post successfully deleted!");
 });
 
 // do not touch
