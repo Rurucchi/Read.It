@@ -35,14 +35,13 @@ app.post("/signin", async (req, res) => {
   //create user
 
   const user = new usermodel({
-    name: req.body.username,
+    name: req.body.name,
     password: req.body.password,
     mail: req.body.mail,
   });
   let username = req.body.name;
 
   try {
-    // await usermodel.find({ name: name, age: { $gte: 18 } });
     await user.save();
   } catch (error) {
     console.log(error);
@@ -54,24 +53,32 @@ app.post("/signin", async (req, res) => {
   return res.send(`created ${username}!`);
 });
 
-// app.get("/login", async (req, res) => {
-//   const user = new usermodel({
-//     name: req.body.username,
-//     password: req.body.password,
-//     mail: req.body.mail,
-//   });
+// READ
 
-//   try {
-//       // user.findOne();
-//     await user.save();
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
+app.post("/login", async (req, res) => {
+  try {
+    let doesMatch = await usermodel
+      .find({ name: req.body.name, password: req.body.password })
+      .exec();
+
+    console.log(doesMatch);
+
+    if (doesMatch.length > 0) {
+      return res.send("Successfully logged in!");
+    }
+
+    return res.send("User not found!");
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// UPDATE
 
 // ----------------------------- Posts CRUD -----------------------------------
 
 const publication = mongoose.Schema({
+  id: String,
   user: String,
   title: String,
   topic: String,
