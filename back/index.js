@@ -31,6 +31,8 @@ const usermodel = mongoose.model("username", user);
 //   return res.send(`username : ${username}`);
 // });
 
+// User search
+
 app.post("/signin", async (req, res) => {
   //create user
 
@@ -58,7 +60,7 @@ app.post("/signin", async (req, res) => {
 app.post("/login", async (req, res) => {
   try {
     let doesMatch = await usermodel
-      .find({ name: req.body.name, password: req.body.password })
+      .find({ mail: req.body.mail, password: req.body.password })
       .exec();
 
     console.log(doesMatch);
@@ -73,7 +75,58 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// UPDATE
+//UPDATE
+
+app.post("/update", async (req, res) => {
+  try {
+    let doesMatch = await usermodel
+      .find({ mail: req.body.mail, password: req.body.password })
+      .exec();
+
+    if (doesMatch.length > 0) {
+      if (req.body.tochange === "name") {
+        doesMatch[0].name = req.body.changeinput;
+        await doesMatch[0].save();
+        return res.send("Successfully Changed!");
+      } else if (req.body.tochange === "mail") {
+        doesMatch[0].mail = req.body.changeinput;
+        await doesMatch[0].save();
+        return res.send("Successfully Changed!");
+      } else if (req.body.tochange === "password") {
+        doesMatch[0].password = req.body.changeinput;
+        await doesMatch[0].save();
+        return res.send("Successfully Changed!");
+      } else {
+        return res.send("Bad request");
+      }
+    }
+
+    return res.send("User not found!");
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// DELETE
+
+app.post("/deleteuser", async (req, res) => {
+  try {
+    let doesMatch = await usermodel
+      .find({ mail: req.body.mail, password: req.body.password })
+      .exec();
+
+    console.log(doesMatch);
+
+    if (doesMatch.length > 0) {
+      await usermodel.deleteOne({ mail: req.body.mail });
+      return res.send("User successfully deleted!");
+    }
+
+    return res.send("User not found!");
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 // ----------------------------- Posts CRUD -----------------------------------
 
