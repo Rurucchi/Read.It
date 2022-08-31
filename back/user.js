@@ -56,7 +56,16 @@ router.post("/login", async (req, res) => {
     console.log(passwordMatch);
 
     if (passwordMatch) {
-      return res.send("Successfully logged in!").status(200);
+      let jwtSecretKey = process.env.JWT_SECRET_KEY;
+      let data = {
+        time: Date.now(),
+        userId: userVerif.mail,
+      };
+
+      const token = jwt.sign(data, jwtSecretKey, { expiresIn: 3600 });
+      return res
+        .send({ message: "Successfully logged in!", token })
+        .status(200);
     }
 
     return res.send("User not found!").status(400);
