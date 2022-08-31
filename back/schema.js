@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const publication = mongoose.Schema({
-  id: String,
   user: String,
   title: String,
   topic: String,

@@ -6,7 +6,6 @@ const { postmodel, publication } = require("./schema");
 
 router.post("/new", async (req, res) => {
   const post = new postmodel({
-    id: req.body.id,
     user: req.body.user,
     title: req.body.title,
     topic: req.body.topic,
@@ -30,21 +29,19 @@ router.post("/new", async (req, res) => {
 
 // --------- PUT (EDIT) POST
 
-router.put("/edit", async (req, res) => {
+router.post("/edit", async (req, res) => {
   // changes enabled :
   // title
   // topic
   // content
   // embed
 
-  // id: req.body.id,
   // user: req.body.user,
   // title: req.body.title,
   // topic: req.body.topic,
   // create: req.body.date,
   // content: req.body.content,
   // embed: req.body.embed,
-  // votes: req.body.votes,
 
   // TODO : when implemented, match user token in request and in database to guarantee security
 
@@ -69,7 +66,7 @@ router.put("/edit", async (req, res) => {
 
 // ---------- DELETE POST
 
-router.delete("/delete", async (req, res) => {
+router.post("/delete", async (req, res) => {
   try {
     await postmodel.findByIdAndDelete(req.query.id).exec();
   } catch (error) {

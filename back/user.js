@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const { usermodel, user } = require("./schema");
+const bcrypt = require("bcrypt");
+const { cryptoHash, cryptoCompare } = require("./crypto");
+const dotenv = require("dotenv");
+const jwt = require("jsonwebtoken");
 
 // routes
 
@@ -13,10 +17,11 @@ const { usermodel, user } = require("./schema");
 
 router.post("/signin", async (req, res) => {
   //create user
+  const hash = await cryptoHash(req.body.password);
 
   const user = new usermodel({
     name: req.body.name,
-    password: req.body.password,
+    password: hash,
     mail: req.body.mail,
   });
   let username = req.body.name;
@@ -37,17 +42,24 @@ router.post("/signin", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    let doesMatch = await usermodel
-      .find({ mail: req.body.mail, password: req.body.password })
-      .exec();
+    let userVerif = await usermodel.findOne({ mail: req.body.mail }).exec();
 
-    console.log(doesMatch);
-
-    if (doesMatch.length > 0) {
-      return res.send("Successfully logged in!");
+    if (!userVerif) {
+      return res.send("User not found!").status(400);
     }
 
-    return res.send("User not found!");
+    const passwordMatch = await cryptoCompare(
+      req.body.password,
+      userVerif.password
+    );
+
+    console.log(passwordMatch);
+
+    if (passwordMatch) {
+      return res.send("Successfully logged in!").status(200);
+    }
+
+    return res.send("User not found!").status(400);
   } catch (error) {
     console.log(error);
   }
@@ -56,30 +68,35 @@ router.post("/login", async (req, res) => {
 //UPDATE
 
 router.post("/update", async (req, res) => {
-  const { tochange, changeinput } = req.body;
-  try {
-    let doesMatch = await usermodel
-      .find({ mail: req.body.mail, password: req.body.password })
-      .exec();
+  const { tochange, changeinput, mail, password } = req.body;
 
-    if (doesMatch.length > 0) {
-      const { name, mail, password } = doesMatch[0];
-      if (reqtochange === "name") {
-        name = changeinput;
-      } else if (tochange === "mail") {
-        mail = changeinput;
-      } else if (tochange === "password") {
-        password = changeinput;
-      } else {
-        return res.send("Bad request");
-      }
-      await doesMatch[0].save();
-      return res.send("Successfully Changed!");
+  try {
+    if (!mail || !password) {
+      return new Error("Bad request");
     }
 
-    return res.send("User not found!");
+    let doesMatch = await usermodel.find({ mail, password }).exec();
+
+    if (doesMatch.length <= 0) {
+      //   return res.send("User not found!");
+      throw new Error("User not found!");
+    }
+
+    const { name, mail, password } = doesMatch[0];
+    if (tochange === "name") {
+      name = changeinput;
+    } else if (tochange === "mail") {
+      mail = changeinput;
+    } else if (tochange === "password") {
+      password = changeinput;
+    } else {
+      return res.send("Bad request").status(400);
+    }
+    await doesMatch[0].save();
+    return res.send("Successfully Changed!").status(200);
   } catch (error) {
     console.log(error);
+    return res.send(error.message);
   }
 });
 
