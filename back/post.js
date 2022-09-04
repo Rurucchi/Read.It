@@ -1,9 +1,15 @@
+const { UserManager } = require("discord.js");
 const express = require("express");
 const router = express.Router();
-const { postmodel, publication } = require("./schema");
+const { postmodel, publication, user } = require("./schema");
 
 // router.get("/hello", (req, res) => res.send("hello"));
 
+// READ POST (note : dont forget about it)
+
+router.get("/view", async (req, res) => {});
+
+// ------------ New post
 router.post("/new", async (req, res) => {
   const post = new postmodel({
     user: req.body.user,
@@ -46,7 +52,7 @@ router.post("/edit", async (req, res) => {
   // TODO : when implemented, match user token in request and in database to guarantee security
 
   try {
-    const post = await postmodel.findById(req.body.id).exec();
+    const post = await postmodel.findById("_" + req.body.id).exec();
     console.log(post);
 
     // changing values in db
@@ -68,7 +74,7 @@ router.post("/edit", async (req, res) => {
 
 router.post("/delete", async (req, res) => {
   try {
-    await postmodel.findByIdAndDelete(req.query.id).exec();
+    await postmodel.findByIdAndDelete("_" + req.query.id).exec();
   } catch (error) {
     console.log(error);
   }

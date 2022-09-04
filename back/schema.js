@@ -4,7 +4,6 @@ const publication = mongoose.Schema({
   user: String,
   title: String,
   topic: String,
-  create: String,
   content: String,
   embed: String,
   votes: String,

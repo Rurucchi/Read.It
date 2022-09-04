@@ -9,6 +9,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const postRouter = require("./post");
 const userRouter = require("./user");
+const jwt = require("jsonwebtoken");
+const { tokenLogin } = require("./utils.js");
 
 app.use(express.json());
 app.use(cors());
@@ -25,37 +27,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
-  // console.log(req.aut);
-  let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
-  let jwtSecretKey = process.env.JWT_SECRET_KEY;
-
-  try {
-    const rawToken = req.header("authorization");
-
-    // token = rawToken.replace("Bearer ", "");
-
-    // console.log(token);
-    const verified = jwt.verify(rawToken, jwtSecretKey);
-
-    console.log(verified);
-
-    if (verified) {
-      req.user = verified;
-    } else {
-      // Access Denied
-      return res.status(401).send(error);
-    }
-  } catch (error) {
-    // Access Denied
-    return res.status(401).send(error);
-  }
-
-  next();
-});
-
 // Routes
-app.use("/post", postRouter);
+app.use("/post", tokenLogin, postRouter);
 app.use("/user", userRouter);
 
 // do not touch

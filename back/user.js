@@ -56,13 +56,13 @@ router.post("/login", async (req, res) => {
     console.log(passwordMatch);
 
     if (passwordMatch) {
-      let jwtSecretKey = process.env.JWT_SECRET_KEY;
+      const jwtSecretKey = process.env.JWT_SECRET_KEY;
       let data = {
         time: Date.now(),
         userId: userVerif.mail,
       };
 
-      const token = jwt.sign(data, jwtSecretKey, { expiresIn: 3600 });
+      const token = await jwt.sign(data, jwtSecretKey, { expiresIn: "30days" });
       return res
         .send({ message: "Successfully logged in!", token })
         .status(200);
@@ -74,23 +74,12 @@ router.post("/login", async (req, res) => {
   }
 });
 
-//UPDATE
+// ------------------ UPDATE
 
 router.post("/update", async (req, res) => {
   const { tochange, changeinput, mail, password } = req.body;
 
   try {
-    if (!mail || !password) {
-      return new Error("Bad request");
-    }
-
-    let doesMatch = await usermodel.find({ mail, password }).exec();
-
-    if (doesMatch.length <= 0) {
-      //   return res.send("User not found!");
-      throw new Error("User not found!");
-    }
-
     const { name, mail, password } = doesMatch[0];
     if (tochange === "name") {
       name = changeinput;
