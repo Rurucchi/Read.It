@@ -7,7 +7,15 @@ const { postmodel, publication, user } = require("./schema");
 
 // READ POST (note : dont forget about it)
 
-router.get("/view", async (req, res) => {});
+router.get("/view/:postId", async (req, res) => {
+  try {
+    const postReturn = await postmodel.findOne({ _id: req.params.postId });
+    return res.send({ postReturn });
+  } catch (error) {
+    console.log(error);
+    res.status(404).send("Post not found!");
+  }
+});
 
 // ------------ New post
 router.post("/new", async (req, res) => {
@@ -18,7 +26,7 @@ router.post("/new", async (req, res) => {
     create: req.body.date,
     content: req.body.content,
     embed: req.body.embed,
-    votes: req.body.votes,
+    votes: 0,
     // TODO : edit votes system : request breaks the vote system
     //
     // TODO : edit usersytem : implement token to fetch and secure the thing

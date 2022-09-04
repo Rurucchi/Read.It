@@ -15,6 +15,16 @@ const jwt = require("jsonwebtoken");
 
 // User search
 
+router.get("/view/:userId", async (req, res) => {
+  try {
+    const userReturn = await usermodel.findOne({ _id: req.params.userId });
+    return res.send(userReturn.name);
+  } catch (error) {
+    console.log(error);
+    res.status(404).send("User not found!");
+  }
+});
+
 router.post("/signin", async (req, res) => {
   //create user
   const hash = await cryptoHash(req.body.password);
