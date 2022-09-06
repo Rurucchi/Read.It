@@ -2,7 +2,7 @@ import { BrowserRouter, Router, Route, Routes } from "react-router-dom";
 import { Outlet, Link } from "react-router-dom";
 import ResponsiveAppBar from "../../components/navbar";
 
-const Home = () => {
+const SettingsPage = () => {
   return (
     <div classname="">
       <ResponsiveAppBar></ResponsiveAppBar>
@@ -10,4 +10,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default SettingsPage;
