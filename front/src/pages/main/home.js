@@ -4,8 +4,11 @@ import ResponsiveAppBar from "../../components/navbar";
 
 const Home = () => {
   return (
-    <div classname="">
+    <div>
       <ResponsiveAppBar></ResponsiveAppBar>
+      <div className="body">
+        <Outlet></Outlet>
+      </div>
     </div>
   );
 };

@@ -1,11 +1,12 @@
 import { BrowserRouter, Router, Route, Routes } from "react-router-dom";
 import { Outlet, Link } from "react-router-dom";
 import ResponsiveAppBar from "../../components/navbar";
+import postBox from "../../components/postComponents/postbox";
 
 const PostView = () => {
   return (
-    <div classname="">
-      <ResponsiveAppBar></ResponsiveAppBar>
+    <div>
+      <postBox></postBox>
     </div>
   );
 };

@@ -191,7 +191,7 @@ export default function PrimarySearchAppBar() {
               inputProps={{ "aria-label": "search" }}
             />
           </Search>
-          <Link to="/post/new">
+          <Link to="post/new">
             <IconButton>
               <AddIcon></AddIcon>
             </IconButton>

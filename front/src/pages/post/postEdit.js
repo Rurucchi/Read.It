@@ -3,11 +3,7 @@ import { Outlet, Link } from "react-router-dom";
 import ResponsiveAppBar from "../../components/navbar";
 
 const PostEdit = () => {
-  return (
-    <div classname="">
-      <ResponsiveAppBar></ResponsiveAppBar>
-    </div>
-  );
+  return <div className=""></div>;
 };
 
 export default PostEdit;

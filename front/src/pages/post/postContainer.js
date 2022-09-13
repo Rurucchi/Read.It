@@ -1,14 +1,10 @@
 import { BrowserRouter, Router, Route, Routes } from "react-router-dom";
 import { Outlet, Link } from "react-router-dom";
 import ResponsiveAppBar from "../../components/navbar";
+import postBox from "../../components/postbox";
 
-const UserSignin = () => {
-  return (
-    <div className="">
-      <h3>New user?</h3>
-      <h1>Sign-in</h1>
-    </div>
-  );
+const PostContainer = () => {
+  return <Outlet></Outlet>;
 };
 
-export default UserSignin;
+export default PostContainer;

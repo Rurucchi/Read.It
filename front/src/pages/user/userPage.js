@@ -4,7 +4,7 @@ import ResponsiveAppBar from "../../components/navbar";
 
 const UserPage = () => {
   return (
-    <div classname="">
+    <div className="">
       <ResponsiveAppBar></ResponsiveAppBar>
     </div>
   );

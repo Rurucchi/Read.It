@@ -4,8 +4,8 @@ import ResponsiveAppBar from "../../components/navbar";
 
 const UserLogin = () => {
   return (
-    <div classname="">
-      <ResponsiveAppBar></ResponsiveAppBar>
+    <div className="">
+      <h1>Login</h1>
     </div>
   );
 };
