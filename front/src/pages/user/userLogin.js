@@ -2,12 +2,18 @@ import { BrowserRouter, Router, Route, Routes } from "react-router-dom";
 import { Outlet, Link } from "react-router-dom";
 import ResponsiveAppBar from "../../components/navbar";
 
-const UserLogin = () => {
+// Components
+import CredsField from "../../components/userComponents/credsField";
+import PasswordField from "../../components/userComponents/passwordField";
+
+const Login = () => {
   return (
-    <div className="">
+    <div>
       <h1>Login</h1>
+      <CredsField />
+      <PasswordField />
     </div>
   );
 };
 
-export default UserLogin;
+export default Login;

@@ -4,8 +4,7 @@ import ResponsiveAppBar from "../../components/navbar";
 
 const UserSignin = () => {
   return (
-    <div className="">
-      <h3>New user?</h3>
+    <div>
       <h1>Sign-in</h1>
     </div>
   );

@@ -2,7 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
-export default function MultilineTextFields() {
+export default function PostWriteField() {
   const [value, setValue] = React.useState();
 
   const handleChange = (event) => {

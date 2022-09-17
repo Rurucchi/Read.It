@@ -3,7 +3,7 @@ import { Outlet, Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
-export default function TitleBar() {
+export default function TitleField() {
   return (
     <Box
       component="form"
