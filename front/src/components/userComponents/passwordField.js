@@ -3,6 +3,8 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
 export default function PasswordField() {
+  const [password, setPassword] = React.useState("");
+
   return (
     <Box
       component="form"
@@ -13,10 +15,12 @@ export default function PasswordField() {
       autoComplete="off"
     >
       <TextField
-        id="outlined-password-input"
+        id="password"
         label="Password"
         type="password"
         autoComplete="current-password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
       />
     </Box>
   );

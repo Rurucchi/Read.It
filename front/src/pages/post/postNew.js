@@ -1,16 +1,19 @@
 import { BrowserRouter, Router, Route, Routes } from "react-router-dom";
 import { Outlet, Link } from "react-router-dom";
-import ResponsiveAppBar from "../../components/navbar";
+import { useState, useEffect, useRef } from "react";
+
+// COMPONENTS
+
 import TitleBar from "../../components/postComponents/titleField";
-import postWriteField from "../../components/postComponents/postWriteField";
+import PostWriteField from "../../components/postComponents/postWriteField";
+import UploadButton from "../../components/postComponents/uploadButton";
 
 const PostNew = () => {
-  fetch("");
-
   return (
     <div>
       <TitleBar />
-      <postWriteField />
+      <PostWriteField />
+      <UploadButton />
     </div>
   );
 };

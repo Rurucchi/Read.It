@@ -27,8 +27,7 @@ router.post("/new", async (req, res) => {
     content: req.body.content,
     embed: req.body.embed,
     votes: 0,
-    // TODO : edit votes system : request breaks the vote system
-    //
+
     // TODO : edit usersytem : implement token to fetch and secure the thing
   });
 

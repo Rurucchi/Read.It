@@ -3,11 +3,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
 export default function PostWriteField() {
-  const [value, setValue] = React.useState();
-
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
+  const [content, setContent] = React.useState("");
 
   return (
     <Box
@@ -19,11 +15,11 @@ export default function PostWriteField() {
       autoComplete="off"
     >
       <TextField
-        id="outlined-multiline-flexible"
+        id="postContent"
         multiline
         rows={20}
-        value={value}
-        onChange={handleChange}
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
       />
     </Box>
   );
