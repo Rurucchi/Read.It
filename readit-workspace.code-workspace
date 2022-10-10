@@ -1,0 +1,14 @@
+{
+  "folders": [
+    {
+      "path": "front"
+    },
+    {
+      "path": "back"
+    },
+    {
+      "path": "."
+    }
+  ],
+  "settings": {}
+}

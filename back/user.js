@@ -52,10 +52,11 @@ router.post("/signin", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
+    console.log(req.body);
     let userVerif = await usermodel.findOne({ mail: req.body.mail }).exec();
 
     if (!userVerif) {
-      return res.send("User not found!").status(400);
+      return res.send({ message: "User not found!" }).status(400);
     }
 
     const passwordMatch = await cryptoCompare(
@@ -78,7 +79,7 @@ router.post("/login", async (req, res) => {
         .status(200);
     }
 
-    return res.send("User not found!").status(400);
+    return res.send({ message: "User not found!" }).status(400);
   } catch (error) {
     console.log(error);
   }
