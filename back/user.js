@@ -6,6 +6,8 @@ const { cryptoHash, cryptoCompare } = require("./crypto");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 
+// DO NOT TOUCH
+
 // routes
 
 // app.get("/", (req, res) => {
@@ -73,7 +75,13 @@ router.post("/login", async (req, res) => {
         userId: userVerif.mail,
       };
 
-      const token = await jwt.sign(data, jwtSecretKey, { expiresIn: "30days" });
+      const token = await jwt.sign(
+        data,
+        jwtSecretKey,
+        { expiresIn: "30days" },
+        userVerif.name
+      );
+
       return res
         .send({ message: "Successfully logged in!", token })
         .status(200);
