@@ -17,10 +17,12 @@ const jwt = require("jsonwebtoken");
 
 // User search
 
-router.get("/view/:userId", async (req, res) => {
+router.post("/me", async (req, res) => {
   try {
-    const userReturn = await usermodel.findOne({ _id: req.params.userId });
-    return res.send(userReturn.name);
+    const userToken = req.headers.authorization;
+
+    const userReturn = await usermodel.findOne({ "sessions.token": userToken });
+    return res.status(200).send(userReturn.name);
   } catch (error) {
     console.log(error);
     res.status(404).send("User not found!");
@@ -34,7 +36,6 @@ router.post("/signin", async (req, res) => {
   const user = new usermodel({
     name: req.body.name,
     password: hash,
-    mail: req.body.mail,
   });
   let username = req.body.name;
 
@@ -55,15 +56,15 @@ router.post("/signin", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     console.log(req.body);
-    let userVerif = await usermodel.findOne({ mail: req.body.mail }).exec();
+    const userExist = await usermodel.findOne({ name: req.body.user }).exec();
 
-    if (!userVerif) {
-      return res.send({ message: "User not found!" }).status(400);
+    if (!userExist) {
+      return res.status(404).send({ message: "User not found" });
     }
 
     const passwordMatch = await cryptoCompare(
       req.body.password,
-      userVerif.password
+      userExist.password
     );
 
     console.log(passwordMatch);
@@ -72,14 +73,14 @@ router.post("/login", async (req, res) => {
       const jwtSecretKey = process.env.JWT_SECRET_KEY;
       let data = {
         time: Date.now(),
-        userId: userVerif.mail,
+        userId: userExist.user,
       };
 
       const token = await jwt.sign(
         data,
         jwtSecretKey,
         { expiresIn: "30days" },
-        userVerif.name
+        userExist.name
       );
 
       return res
@@ -95,44 +96,40 @@ router.post("/login", async (req, res) => {
 
 // ------------------ UPDATE
 
-router.post("/update", async (req, res) => {
-  const { tochange, changeinput, mail, password } = req.body;
-
+router.patch("/update", async (req, res) => {
+  const userToken = req.headers.authorization;
+  let filter;
   try {
-    const { name, mail, password } = doesMatch[0];
-    if (tochange === "name") {
-      name = changeinput;
-    } else if (tochange === "mail") {
-      mail = changeinput;
-    } else if (tochange === "password") {
-      password = changeinput;
+    if (req.body.tochange === "name") {
+      filter = { name: req.body.changeInput };
+    } else if (req.body.tochange === "password") {
+      const userPassword = cryptoHash(req.body.changeInput);
+      filter = { password: userPassword };
     } else {
       return res.send("Bad request").status(400);
     }
-    await doesMatch[0].save();
-    return res.send("Successfully Changed!").status(200);
+
+    // Request to DB
+    try {
+      await usermodel.findOne({ "sessions.token": userToken });
+      return res.send("Successfully Changed!").status(200);
+    } catch (error) {
+      res.status(404).send("User not found!");
+    }
   } catch (error) {
     console.log(error);
-    return res.send(error.message);
+    return res.status(400).send(error.message);
   }
 });
 
 // DELETE
 
-router.post("/delete", async (req, res) => {
+router.delete("/delete", async (req, res) => {
   try {
-    let doesMatch = await usermodel
-      .find({ mail: req.body.mail, password: req.body.password })
-      .exec();
+    const userToken = req.headers.authorization;
+    await usermodel.findOneAndDelete({ "sessions.token": userToken });
 
-    console.log(doesMatch);
-
-    if (doesMatch.length > 0) {
-      await usermodel.deleteOne({ mail: req.body.mail });
-      return res.send("User successfully deleted!");
-    }
-
-    return res.send("User not found!");
+    return res.status(200).send("User successfully deleted!");
   } catch (error) {
     console.log(error);
   }

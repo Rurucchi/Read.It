@@ -14,7 +14,6 @@ const postmodel = mongoose.model("post", publication);
 const user = new mongoose.Schema({
   name: String,
   password: String,
-  mail: String,
 });
 
 const usermodel = mongoose.model("username", user);

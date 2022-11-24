@@ -1,15 +1,19 @@
 # Read.IT
 
-Read.IT aims to be a middle ground between 4chan and Reddit
+⚠️ THIS PROJECT IS CURRENTLY UNDER DEVELOPMENT. IF ANY BUGS OR ERRORS OCCURS, PLEASE REPORT IT [HERE](https://github.com/Rurucchi/Read.It/issues) ⚠️
 
-## Main features list
+Read.IT aims to be a middle ground between 4chan and Reddit.
+
+## Main features list _(will update)_
+
+Possible features will be in italic
 
 - User CRUD & Authentication
 - Post submission
 - Upvotes and Comments
 - Topics
-- User notifications
-- Password recovery by mail
+- _User notifications_
+- _Password recovery by mail_
 
 ---
 
@@ -27,7 +31,7 @@ Read.IT aims to be a middle ground between 4chan and Reddit
 
 ---
 
-## Setup the servers :
+## Setup the servers (Local) :
 
 1. Install [NodeJS](https://nodejs.org/en/) (post v18.10.0)
 2. Install and start [MongoDB](https://www.mongodb.com/try/download/community)

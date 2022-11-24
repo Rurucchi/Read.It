@@ -1,6 +1,6 @@
 import { BrowserRouter, Router, Route, Routes } from "react-router-dom";
 import { Outlet, Link } from "react-router-dom";
-import ResponsiveAppBar from "../../components/navbar";
+import ResponsiveAppBar from "../../components/main-ui/navbar";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Stack } from "@mui/system";

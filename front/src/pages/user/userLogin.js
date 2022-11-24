@@ -1,7 +1,7 @@
 import { BrowserRouter, Router, Route, Routes } from "react-router-dom";
 import { useState } from "react";
 import { Outlet, Link } from "react-router-dom";
-import ResponsiveAppBar from "../../components/navbar";
+import ResponsiveAppBar from "../../components/main-ui/navbar";
 import { Navigate, useNavigate } from "react-router-dom";
 
 // Components

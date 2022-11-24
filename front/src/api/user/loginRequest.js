@@ -11,9 +11,11 @@ async function LoginRequest(creds, password) {
     const content = await result.json();
 
     // SAVE INFOS
-
     await localStorage.setItem("token", content.token);
-    await localStorage.setItem("user", content.name);
+
+    if (localStorage.token === undefined) {
+      throw new Error("fuck off");
+    }
 
     return true;
   } catch (error) {

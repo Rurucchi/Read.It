@@ -27,8 +27,6 @@ router.post("/new", async (req, res) => {
     content: req.body.content,
     embed: req.body.embed,
     votes: 0,
-
-    // TODO : edit usersytem : implement token to fetch and secure the thing
   });
 
   try {
@@ -56,8 +54,6 @@ router.post("/edit", async (req, res) => {
   // content: req.body.content,
   // embed: req.body.embed,
 
-  // TODO : when implemented, match user token in request and in database to guarantee security
-
   try {
     const post = await postmodel.findById("_" + req.body.id).exec();
     console.log(post);
@@ -70,11 +66,10 @@ router.post("/edit", async (req, res) => {
     post.embed = req.body.embed;
 
     await post.save();
+    return res.status(200).send("Post successfully changed!");
   } catch (error) {
     console.log(error);
   }
-
-  return res.send("Post successfully changed!");
 });
 
 // ---------- DELETE POST
@@ -84,6 +79,7 @@ router.post("/delete", async (req, res) => {
     await postmodel.findByIdAndDelete("_" + req.query.id).exec();
   } catch (error) {
     console.log(error);
+    res.status(404);
   }
   return res.status(200).send("Post successfully deleted!");
 });

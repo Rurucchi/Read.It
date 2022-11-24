@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import ResponsiveAppBar from "../../components/navbar";
+import ResponsiveAppBar from "../../components/main-ui/navbar";
 import { Button } from "@mui/material";
 
 const NoMatch = () => {
