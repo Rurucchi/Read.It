@@ -15,7 +15,7 @@ const jwt = require("jsonwebtoken");
 //   return res.send(`username : ${username}`);
 // });
 
-// User search
+// ------------- User search
 
 router.post("/me", async (req, res) => {
   try {
@@ -29,7 +29,7 @@ router.post("/me", async (req, res) => {
   }
 });
 
-router.post("/signin", async (req, res) => {
+router.post("/create", async (req, res) => {
   //create user
   const hash = await cryptoHash(req.body.password);
 
@@ -97,32 +97,49 @@ router.post("/login", async (req, res) => {
 // ------------------ UPDATE
 
 router.patch("/update", async (req, res) => {
-  const userToken = req.headers.authorization;
-  let filter;
   try {
-    if (req.body.tochange === "name") {
-      filter = { name: req.body.changeInput };
-    } else if (req.body.tochange === "password") {
-      const userPassword = cryptoHash(req.body.changeInput);
-      filter = { password: userPassword };
-    } else {
-      return res.send("Bad request").status(400);
+    const userToken = req.headers.authorization;
+
+    // SEARCH USER IN MONGO
+
+    try {
+      if (!req.body.tochange === "name" || !req.body.tochange === "password") {
+        res.status(400).send("Bad Request");
+        throw new Error("Bad Request");
+      }
+
+      const userToken = req.headers.authorization.replace("Bearer ", "");
+      const toChange = req.body.tochange;
+
+      const filter = { "sessions.token": userToken };
+
+      console.log("TOKEN :" + userToken);
+
+      let update;
+
+      if (req.body.tochange === "password") {
+        const newPassword = await cryptoHash(req.body.changeInput);
+        console.log("PASSWORD : " + newPassword);
+        update = { password: newPassword };
+      } else {
+        update = { name: req.body.changeInput };
+      }
+
+      await usermodel.findOneAndUpdate(filter, update);
+      res.status(200).send("Successfuly changed!");
+    } catch (error) {
+      console.log(error);
+      res.status(404).send("User not found!");
     }
 
     // Request to DB
-    try {
-      await usermodel.findOne({ "sessions.token": userToken });
-      return res.send("Successfully Changed!").status(200);
-    } catch (error) {
-      res.status(404).send("User not found!");
-    }
   } catch (error) {
     console.log(error);
     return res.status(400).send(error.message);
   }
 });
 
-// DELETE
+// -------------------- DELETE
 
 router.delete("/delete", async (req, res) => {
   try {
