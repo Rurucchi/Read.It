@@ -21,14 +21,18 @@ import PostView from "./pages/post/postView";
 import UserContainer from "./pages/user/userContainer";
 
 import UserSettings from "./pages/user/userSettings";
-import UserLogin from "./pages/user/userLogin";
-import UserSignin from "./pages/user/userSignin";
 import UserPage from "./pages/user/userPage";
+
+// --------- Auth pages
+import Login from "./pages/auth/Login/Login";
+import Signin from "./pages/auth/Signin/Signin";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/login" element={<Login />}></Route>
+        <Route path="/signin" element={<Signin />}></Route>
         <Route path="/" element={<Home />}>
           <Route path="/topic" element={<TopicPage />}></Route>
           <Route path="/post" element={<PostContainer />}>
@@ -37,8 +41,6 @@ function App() {
             <Route path="edit" element={<PostEdit />}></Route>
           </Route>
           <Route path="/user" element={<UserContainer />}>
-            <Route path="login" element={<UserLogin />}></Route>
-            <Route path="signin" element={<UserSignin />}></Route>
             <Route path="view" element={<UserPage />}></Route>
             <Route path="settings" element={<UserSettings />}></Route>
           </Route>

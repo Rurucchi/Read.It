@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken");
 
+// Models
+const { userModel, user } = require("./schema");
+
 const tokenLogin = async (req, res, next) => {
   // console.log(req.aut);
   let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
@@ -29,4 +32,15 @@ const tokenLogin = async (req, res, next) => {
   next();
 };
 
-module.exports = { tokenLogin };
+async function getUserId(userToken) {
+  const userReturn = await userModel.findOne({ "sessions.token": userToken });
+  return userReturn.uid;
+}
+
+function getTime() {
+  const localTime = Date.now;
+  const time = new Date(localTime);
+  return time.toISOString;
+}
+
+module.exports = { tokenLogin, getUserId, getTime };

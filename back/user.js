@@ -1,19 +1,20 @@
-const express = require("express");
-const router = express.Router();
-const { usermodel, user } = require("./schema");
-const bcrypt = require("bcrypt");
-const { cryptoHash, cryptoCompare } = require("./crypto");
-const dotenv = require("dotenv");
-const jwt = require("jsonwebtoken");
-
 // DO NOT TOUCH
 
-// routes
+// SERVER STUFF
+const express = require("express");
+const router = express.Router();
+const dotenv = require("dotenv");
 
-// app.get("/", (req, res) => {
-//   let username = req.query.name;
-//   return res.send(`username : ${username}`);
-// });
+// CRYPTO STUFF
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { cryptoHash, cryptoCompare } = require("./crypto");
+
+// UTILS
+const { v4: uuidv4 } = require("uuid");
+
+// MONGO MODELS AND DB STUFF
+const { userModel, user } = require("./schema");
 
 // ------------- User search
 
@@ -21,7 +22,7 @@ router.post("/me", async (req, res) => {
   try {
     const userToken = req.headers.authorization;
 
-    const userReturn = await usermodel.findOne({ "sessions.token": userToken });
+    const userReturn = await userModel.findOne({ "sessions.token": userToken });
     return res.status(200).send(userReturn.name);
   } catch (error) {
     console.log(error);
@@ -29,13 +30,24 @@ router.post("/me", async (req, res) => {
   }
 });
 
+router.get("/read", async (req, res) => {
+  try {
+    return res.status(200).send(userReturn.name);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 router.post("/create", async (req, res) => {
   //create user
   const hash = await cryptoHash(req.body.password);
 
-  const user = new usermodel({
+  const uid = uuidv4();
+
+  const user = new userModel({
     name: req.body.name,
     password: hash,
+    uid: uid,
   });
   let username = req.body.name;
 
@@ -56,7 +68,7 @@ router.post("/create", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     console.log(req.body);
-    const userExist = await usermodel.findOne({ name: req.body.user }).exec();
+    const userExist = await userModel.findOne({ name: req.body.user }).exec();
 
     if (!userExist) {
       return res.status(404).send({ message: "User not found" });
@@ -125,7 +137,7 @@ router.patch("/update", async (req, res) => {
         update = { name: req.body.changeInput };
       }
 
-      await usermodel.findOneAndUpdate(filter, update);
+      await userModel.findOneAndUpdate(filter, update);
       res.status(200).send("Successfuly changed!");
     } catch (error) {
       console.log(error);
@@ -144,7 +156,7 @@ router.patch("/update", async (req, res) => {
 router.delete("/delete", async (req, res) => {
   try {
     const userToken = req.headers.authorization;
-    await usermodel.findOneAndDelete({ "sessions.token": userToken });
+    await userModel.findOneAndDelete({ "sessions.token": userToken });
 
     return res.status(200).send("User successfully deleted!");
   } catch (error) {

@@ -1,16 +1,18 @@
 import { BrowserRouter, Router, Route, Routes } from "react-router-dom";
 import { useState } from "react";
 import { Outlet, Link } from "react-router-dom";
-import ResponsiveAppBar from "../../components/main-ui/navbar";
+import ResponsiveAppBar from "../../../components/main-ui/navbar";
 import { Navigate, useNavigate } from "react-router-dom";
 
+import styles from "./styles.module.css";
+
 // Components
-import CredsField from "../../components/userComponents/fields/credsField";
-import PasswordField from "../../components/userComponents/fields/passwordField";
-import LoginButton from "../../components/userComponents/buttons/loginButton";
+import CredsField from "../../../components/userComponents/fields/credsField";
+import PasswordField from "../../../components/userComponents/fields/passwordField";
+import LoginButton from "../../../components/userComponents/buttons/loginButton";
 
 //API REQUEST
-import LoginRequest from "../../api/user/loginRequest.js";
+import LoginRequest from "../../../api/user/loginRequest";
 
 // OTHER FUNCTIONS
 

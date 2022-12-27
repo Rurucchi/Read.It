@@ -1,21 +1,21 @@
 import { BrowserRouter, Router, Route, Routes } from "react-router-dom";
 import { Outlet, Link } from "react-router-dom";
-import ResponsiveAppBar from "../../components/main-ui/navbar";
+import ResponsiveAppBar from "../../../components/main-ui/navbar";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Stack } from "@mui/system";
 
 // COMPONENTS
-import NameField from "../../components/userComponents/fields/nameField";
-import CredsField from "../../components/userComponents/fields/credsField";
-import PasswordField from "../../components/userComponents/fields/passwordField";
-import SigninButton from "../../components/userComponents/buttons/signinButton";
+import NameField from "../../../components/userComponents/fields/nameField";
+import CredsField from "../../../components/userComponents/fields/credsField";
+import PasswordField from "../../../components/userComponents/fields/passwordField";
+import SigninButton from "../../../components/userComponents/buttons/signinButton";
 
 // API REQUESTS
-import CreateUserRequest from "../../api/user/createUserRequest";
-import LoginRequest from "../../api/user/loginRequest.js";
+import CreateUserRequest from "../../../api/user/createUserRequest";
+import LoginRequest from "../../../api/user/loginRequest.js";
 
-const UserSignin = () => {
+const Signin = () => {
   // Hooks
   const navigate = useNavigate();
 
@@ -49,4 +49,4 @@ const UserSignin = () => {
   );
 };
 
-export default UserSignin;
+export default Signin;
