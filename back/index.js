@@ -12,6 +12,9 @@ const userRouter = require("./user");
 const jwt = require("jsonwebtoken");
 const { tokenLogin } = require("./utils.js");
 
+// DISABLE MONGOOSE WARNING
+mongoose.set("strictQuery", true);
+
 app.use(express.json());
 app.use(cors());
 

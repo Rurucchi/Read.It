@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 // Models
 const { userModel, user } = require("./schema");
 
+// TOKEN LOGIN
 const tokenLogin = async (req, res, next) => {
   // console.log(req.aut);
   let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
@@ -32,15 +33,20 @@ const tokenLogin = async (req, res, next) => {
   next();
 };
 
+// USER VERIF & USER RELATED STUFF
+
 async function getUserId(userToken) {
   const userReturn = await userModel.findOne({ "sessions.token": userToken });
   return userReturn.uid;
 }
 
+// OTHER FUNCTIONS
+
 function getTime() {
-  const localTime = Date.now;
-  const time = new Date(localTime);
-  return time.toISOString;
+  const today = new Date();
+  const date =
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+  return date;
 }
 
 module.exports = { tokenLogin, getUserId, getTime };

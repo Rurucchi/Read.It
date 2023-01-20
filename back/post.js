@@ -14,7 +14,9 @@ const { userModel, user } = require("./schema");
 
 router.get("/view/:postId", async (req, res) => {
   try {
-    const postReturn = await postModel.findOne({ _id: req.params.postId });
+    const postReturn = await postModel.findOne({ postid: req.params.postId });
+    console.log(req.params.postId);
+    console.log(postReturn);
     return res.send({ postReturn });
   } catch (error) {
     console.log(error);
@@ -27,8 +29,7 @@ router.post("/new", async (req, res) => {
   try {
     const postid = uuidv4();
 
-    const user = getUserId(req.headers.authorization);
-
+    const user = await getUserId(req.headers.authorization);
     const time = getTime();
 
     const post = new postModel({
@@ -52,7 +53,7 @@ router.post("/new", async (req, res) => {
 
 // --------- EDIT POST                 !!!!!!!!TO EDIT!!!!!!!!
 
-router.post("/edit", async (req, res) => {
+router.patch("/edit", async (req, res) => {
   // changes enabled :
   // title
   // topic
@@ -66,34 +67,74 @@ router.post("/edit", async (req, res) => {
   // content: req.body.content,
   // embed: req.body.embed,
 
+  // finding post
+
+  let post;
+
   try {
-    const post = await postModel.findById("_" + req.body.id).exec();
-    console.log(post);
+    post = await postModel.findOne({ postid: req.body.postid }).exec();
+  } catch (error) {
+    res.status(404).send("Post Not Found");
+  }
 
-    // changing values in db
+  // see if user is logged in
 
-    post.title = req.body.title;
-    post.topic = req.body.topic;
-    post.content = req.body.content;
-    post.embed = req.body.embed;
+  let user;
+  try {
+    user = await getUserId(req.headers.authorization);
+  } catch (error) {
+    res.status(401).send("Unauthorized");
+  }
 
-    await post.save();
-    return res.status(200).send("Post successfully changed!");
+  // CHECK USER
+  try {
+    if (user === post.user) {
+      post.title = req.body.title;
+      post.topic = req.body.topic;
+      post.content = req.body.content;
+      post.embed = req.body.embed;
+      await post.save();
+      return res.status(200).send("Post successfully changed!");
+    } else {
+      res.status(401).send("Unauthorized");
+    }
   } catch (error) {
     console.log(error);
+    res.status(500).send("Internal Server Error");
   }
 });
 
 // ---------- DELETE POST
 
-router.post("/delete", async (req, res) => {
+router.delete("/delete", async (req, res) => {
+  // POST
+  let post;
+
   try {
-    await postModel.findByIdAndDelete(req.query.id).exec();
+    post = await postModel.findOne({ postid: req.body.postid }).exec();
   } catch (error) {
-    console.log(error);
-    res.status(404);
+    res.status(404).send("Post Not Found");
   }
-  return res.status(200).send("Post successfully deleted!");
+
+  let user;
+
+  try {
+    user = await getUserId(req.headers.authorization);
+  } catch (error) {
+    return res.status(401).send("Unauthorized");
+  }
+
+  if (user === post.user) {
+    try {
+      await postModel.findOneAndDelete({ postid: req.body.postid }).exec();
+      return res.status(200).send("Post succesfully deleted!");
+    } catch (error) {
+      console.log(error);
+      return res.status(404);
+    }
+  } else {
+    return res.status(401);
+  }
 });
 
 module.exports = router;
