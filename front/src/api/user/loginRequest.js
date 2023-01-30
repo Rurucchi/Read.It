@@ -1,23 +1,16 @@
-async function LoginRequest(creds, password) {
+async function LoginRequest(name, password) {
   try {
-    const data = { password, mail: creds };
+    const data = { password, name };
 
+    console.log(JSON.stringify(data));
     const result = await fetch(process.env.REACT_APP_SERVER + "/user/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    });
-
-    const content = await result.json();
+    }).then((data) => data.json())
+    .then((data) => localStorage.setItem("token", data.token));
 
     // SAVE INFOS
-    await localStorage.setItem("token", content.token);
-
-    if (localStorage.token === undefined) {
-      throw new Error("fuck off");
-    }
-
-    return true;
   } catch (error) {
     console.log(error);
     return false;

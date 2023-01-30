@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, Navigate, useNavigate } from "react-router-dom";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -18,6 +18,9 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import CodeOffIcon from "@mui/icons-material/CodeOff";
 import AddIcon from "@mui/icons-material/Add";
+
+// API STUFF
+import Logout from "../../api/user/logout";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -83,6 +86,8 @@ export default function PrimarySearchAppBar() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const navigate = useNavigate();
+
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -101,8 +106,8 @@ export default function PrimarySearchAppBar() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
       <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+      <MenuItem onClick={() => {Logout(); handleMenuClose(); navigate("/login")}}>Logout</MenuItem>
     </Menu>
   );
 

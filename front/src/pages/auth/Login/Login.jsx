@@ -1,8 +1,6 @@
-import { BrowserRouter, Router, Route, Routes } from "react-router-dom";
 import { useState } from "react";
-import { Outlet, Link } from "react-router-dom";
-import ResponsiveAppBar from "../../../components/main-ui/navbar";
 import { Navigate, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 import styles from "./styles.module.css";
 
@@ -13,12 +11,29 @@ import LoginButton from "../../../components/userComponents/buttons/loginButton"
 
 //API REQUEST
 import LoginRequest from "../../../api/user/loginRequest";
+import getUserName from "../../../api/user/me";
 
 // OTHER FUNCTIONS
 
 const Login = () => {
   // Hooks
   const navigate = useNavigate();
+
+  // CHECK IF USER IS ALREADY LOGGED IN
+
+  useEffect(() => {
+    const isLogged = async () => {
+      const loggedIn = await getUserName();
+      console.log(loggedIn);
+      return loggedIn;
+    };
+
+    isLogged().then((data) => {
+      if (data) {
+        navigate("/");
+      }
+    });
+  }, []);
 
   const [creds, setCreds] = useState("");
   const [password, setPassword] = useState("");

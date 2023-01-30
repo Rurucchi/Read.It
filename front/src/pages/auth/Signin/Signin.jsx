@@ -20,13 +20,12 @@ const Signin = () => {
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
-  const [creds, setCreds] = useState("");
   const [password, setPassword] = useState("");
 
   const handleClick = async () => {
-    const createUserSuccess = await CreateUserRequest(name, creds, password);
+    const createUserSuccess = await CreateUserRequest(name, password);
     if (createUserSuccess) {
-      const loginSuccess = await LoginRequest(creds, password);
+      const loginSuccess = await LoginRequest(name, password);
       if (loginSuccess) {
         navigate("/");
       }
@@ -38,7 +37,6 @@ const Signin = () => {
       <Stack>
         <h1>Sign-in</h1>
         <NameField value={name} onChange={(e) => setName(e.target.value)} />
-        <CredsField value={creds} onChange={(e) => setCreds(e.target.value)} />
         <PasswordField
           value={password}
           onChange={(e) => setPassword(e.target.value)}

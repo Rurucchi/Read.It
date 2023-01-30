@@ -20,6 +20,11 @@ const { userModel, user } = require("./schema");
 
 router.post("/me", async (req, res) => {
   try {
+
+    if (!req.headers.authorization) {
+      res.status(400).send("Not Logged In!");
+    }
+
     const userToken = req.headers.authorization;
 
     const userReturn = await userModel.findOne({ "sessions.token": userToken });
@@ -40,6 +45,7 @@ router.get("/read", async (req, res) => {
 
 router.post("/create", async (req, res) => {
   //create user
+  console.log(req.body.password);
   const hash = await cryptoHash(req.body.password);
 
   const uid = uuidv4();
@@ -68,39 +74,41 @@ router.post("/create", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     console.log(req.body);
-    const userExist = await userModel.findOne({ name: req.body.user }).exec();
+    const userExist = await userModel.findOne({ name: req.body.name }).exec();
+
+    
 
     if (!userExist) {
       return res.status(404).send({ message: "User not found" });
     }
 
+    
     const passwordMatch = await cryptoCompare(
       req.body.password,
       userExist.password
     );
 
-    console.log(passwordMatch);
+    let token;
 
     if (passwordMatch) {
+      
       const jwtSecretKey = process.env.JWT_SECRET_KEY;
       let data = {
         time: Date.now(),
         userId: userExist.user,
       };
 
-      const token = await jwt.sign(
+      token = await jwt.sign(
         data,
         jwtSecretKey,
         { expiresIn: "30days" },
         userExist.name
       );
 
-      return res
-        .send({ message: "Successfully logged in!", token })
-        .status(200);
+      return res.status(200).send({ token: token });
     }
 
-    return res.send({ message: "User not found!" }).status(400);
+    return res.send({ message: "Wrong Credentials!" }).status(400);
   } catch (error) {
     console.log(error);
   }

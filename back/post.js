@@ -25,6 +25,7 @@ router.get("/view/:postId", async (req, res) => {
 });
 
 // ------------ New post
+
 router.post("/new", async (req, res) => {
   try {
     const postid = uuidv4();
