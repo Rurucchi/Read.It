@@ -4,7 +4,7 @@ const router = express.Router();
 
 // UTILS
 const { v4: uuidv4 } = require("uuid");
-const { getUserId, getTime } = require("./utils.js");
+const { getUserId } = require("./utils.js");
 
 // MONGO STUFF
 const { postModel, postScheme } = require("./schema");
@@ -61,52 +61,51 @@ router.post("/new", async (req, res) => {
   }
 });
 
-// --------- EDIT POST                 !!!!!!!!TO EDIT!!!!!!!!
+// --------- EDIT POST                 !!!!!!!!TO EDIT!!!!!!!!                   wip rn
 
-router.patch("/edit", async (req, res) => {
+router.patch("/edit/:postId", async (req, res) => {
   // changes enabled :
   // title
   // topic
   // content
   // embed
 
-  // user: req.body.user,
-  // title: req.body.title,
-  // topic: req.body.topic,
-  // create: req.body.date,
-  // content: req.body.content,
-  // embed: req.body.embed,
-
   // finding post
 
-  let post;
+  let query;
 
   try {
-    post = await postModel.findOne({ postid: req.body.postid }).exec();
+    query = await postModel.findOne({ postid: req.params.postId }).exec();
   } catch (error) {
-    res.status(404).send("Post Not Found");
+    return res.status(404).send("Post Not Found");
   }
 
-  // see if user is logged in
+  // CHECK USER AUTH AND ACCESS
 
+  let userToken = req.headers.authorization;
   let user;
   try {
-    user = await getUserId(req.headers.authorization);
+    user = await getUserId(userToken);
   } catch (error) {
-    res.status(401).send("Unauthorized");
+    console.log(error);
+    return res.status(401).send("Not logged in!");
   }
 
-  // CHECK USER
+  // edit post
   try {
-    if (user === post.user) {
-      post.title = req.body.title;
-      post.topic = req.body.topic;
-      post.content = req.body.content;
-      post.embed = req.body.embed;
-      await post.save();
+    console.log(user);
+    console.log(query.user);
+    if (user === query.user) {
+      query.title = req.body.title;
+      query.topic = req.body.topic;
+      query.content = req.body.content;
+      query.embed = req.body.embed;
+
+      //save
+      await query.save();
       return res.status(200).send("Post successfully changed!");
     } else {
-      res.status(401).send("Unauthorized");
+      res.status(401).send("You cannot edit this post.");
     }
   } catch (error) {
     console.log(error);
