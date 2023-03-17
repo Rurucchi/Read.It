@@ -1,9 +1,9 @@
-export default async function getUserName() {
+export default async function getUserName(token) {
   const requestResult = await fetch(process.env.REACT_APP_SERVER + "/user/me", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authentication: localStorage.getItem("token"),
+      "Authorization": token,
     },
   });
 

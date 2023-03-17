@@ -31,8 +31,8 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use("/post", tokenLogin, postRouter);
-app.use("/user", userRouter);
+app.use("/post", tokenLogin, postRouter, cors());
+app.use("/user", userRouter, cors());
 
 // do not touch
 app.listen(port, () => {

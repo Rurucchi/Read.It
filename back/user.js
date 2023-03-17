@@ -4,6 +4,7 @@
 const express = require("express");
 const router = express.Router();
 const dotenv = require("dotenv");
+const jwtSecretKey = process.env.JWT_SECRET_KEY;
 
 // CRYPTO STUFF
 const bcrypt = require("bcrypt");
@@ -20,31 +21,40 @@ const { userModel, user } = require("./schema");
 
 router.post("/me", async (req, res) => {
   try {
+    if (req.headers.authorization) {
+      if (
+        !req.body.tochange === "name" ||
+        !req.body.tochange === "password" ||
+        req.headers.authorization === "Bearer undefined" ||
+        req.headers.authorization === "Bearer " ||
+        req.headers.authorization === undefined ||
+        req.headers.authorization === ""
+      ) {
+        res.status(400).send("Not Logged In!");
+      } else {
+        //token parsing
+        let token = req.headers.authorization;
+        console.log(token);
+        token = token.slice(7);
 
-    if (!req.headers.authorization) {
+        // jwt stuff
+        const decoded = jwt.verify(token, jwtSecretKey);
+        console.log(decoded);
+
+        return res.status(200).send(decoded.username);
+      }
+    } else {
       res.status(400).send("Not Logged In!");
     }
-
-    const userToken = req.headers.authorization;
-
-    const userReturn = await userModel.findOne({ "sessions.token": userToken });
-    return res.status(200).send(userReturn.name);
   } catch (error) {
     console.log(error);
-    res.status(404).send("User not found!");
+    res.status(501).send("Internal Server Error");
   }
 });
 
-router.get("/read", async (req, res) => {
-  try {
-    return res.status(200).send(userReturn.name);
-  } catch (error) {
-    console.log(error);
-  }
-});
+// ---------------------- create user
 
 router.post("/create", async (req, res) => {
-  //create user
   console.log(req.body.password);
   const hash = await cryptoHash(req.body.password);
 
@@ -74,36 +84,30 @@ router.post("/create", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     console.log(req.body);
-    const userExist = await userModel.findOne({ name: req.body.name }).exec();
 
-    
+    // mongo call
+    const userExist = await userModel.findOne({ name: req.body.name }).exec();
 
     if (!userExist) {
       return res.status(404).send({ message: "User not found" });
     }
 
-    
+    // compare passwords
     const passwordMatch = await cryptoCompare(
       req.body.password,
       userExist.password
     );
 
+    // generate token
     let token;
 
     if (passwordMatch) {
-      
-      const jwtSecretKey = process.env.JWT_SECRET_KEY;
       let data = {
-        time: Date.now(),
-        userId: userExist.user,
+        username: userExist.name,
+        userId: userExist.uid,
       };
 
-      token = await jwt.sign(
-        data,
-        jwtSecretKey,
-        { expiresIn: "30days" },
-        userExist.name
-      );
+      token = await jwt.sign(data, jwtSecretKey, { expiresIn: "30days" });
 
       return res.status(200).send({ token: token });
     }
@@ -115,7 +119,6 @@ router.post("/login", async (req, res) => {
 });
 
 // ------------------ UPDATE
-
 router.patch("/update", async (req, res) => {
   try {
     const userToken = req.headers.authorization;
@@ -123,18 +126,28 @@ router.patch("/update", async (req, res) => {
     // SEARCH USER IN MONGO
 
     try {
-      if (!req.body.tochange === "name" || !req.body.tochange === "password") {
+      // verify params
+      if (
+        !req.body.tochange === "name" ||
+        !req.body.tochange === "password" ||
+        req.headers.authorization === "Bearer undefined" ||
+        req.headers.authorization === "Bearer " ||
+        req.headers.authorization === undefined ||
+        req.headers.authorization === ""
+      ) {
         res.status(400).send("Bad Request");
-        throw new Error("Bad Request");
       }
 
-      const userToken = req.headers.authorization.replace("Bearer ", "");
-      const toChange = req.body.tochange;
+      // token parsing + params
+      let token = req.headers.authorization;
+      console.log(token);
+      token = token.slice(7);
 
-      const filter = { "sessions.token": userToken };
+      // jwt stuff
+      const decoded = jwt.verify(token, jwtSecretKey);
+      console.log(decoded);
 
-      console.log("TOKEN :" + userToken);
-
+      // mongo stuff
       let update;
 
       if (req.body.tochange === "password") {
@@ -145,8 +158,14 @@ router.patch("/update", async (req, res) => {
         update = { name: req.body.changeInput };
       }
 
-      await userModel.findOneAndUpdate(filter, update);
-      res.status(200).send("Successfuly changed!");
+      const filter = { uid: decoded.userId };
+
+      try {
+        await userModel.findOneAndUpdate(filter, update);
+        res.status(200).send("Successfuly changed!");
+      } catch (error) {
+        res.status(501).send("Internal Server Error");
+      }
     } catch (error) {
       console.log(error);
       res.status(404).send("User not found!");
@@ -163,8 +182,14 @@ router.patch("/update", async (req, res) => {
 
 router.delete("/delete", async (req, res) => {
   try {
-    const userToken = req.headers.authorization;
-    await userModel.findOneAndDelete({ "sessions.token": userToken });
+    let token = req.headers.authorization;
+    console.log(token);
+    token = token.slice(7);
+
+    const decoded = jwt.verify(token, jwtSecretKey);
+    console.log(decoded);
+
+    await userModel.findOneAndDelete({ uid: decoded.userId });
 
     return res.status(200).send("User successfully deleted!");
   } catch (error) {

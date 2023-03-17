@@ -1,3 +1,4 @@
+const { time } = require("discord.js");
 const mongoose = require("mongoose");
 
 // SCHEMES
@@ -10,6 +11,7 @@ const postScheme = mongoose.Schema({
   embed: String,
   votes: Number,
   postid: String,
+  created: Number,
 });
 
 const postHistoryScheme = mongoose.Schema({

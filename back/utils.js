@@ -1,13 +1,15 @@
 const jwt = require("jsonwebtoken");
 
+//  jwt imports
+const tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
+const jwtSecretKey = process.env.JWT_SECRET_KEY;
+
 // Models
 const { userModel, user } = require("./schema");
 
 // TOKEN LOGIN
 const tokenLogin = async (req, res, next) => {
   // console.log(req.aut);
-  let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
-  let jwtSecretKey = process.env.JWT_SECRET_KEY;
 
   try {
     const rawToken = req.header("authorization");
@@ -36,8 +38,10 @@ const tokenLogin = async (req, res, next) => {
 // USER VERIF & USER RELATED STUFF
 
 async function getUserId(userToken) {
-  const userReturn = await userModel.findOne({ "sessions.token": userToken });
-  return userReturn.uid;
+  token = userToken.slice(7);
+  const decoded = jwt.verify(token, jwtSecretKey);
+
+  return decoded.userId;
 }
 
 // OTHER FUNCTIONS

@@ -14,9 +14,19 @@ const { userModel, user } = require("./schema");
 
 router.get("/view/:postId", async (req, res) => {
   try {
-    const postReturn = await postModel.findOne({ postid: req.params.postId });
-    console.log(req.params.postId);
-    console.log(postReturn);
+    //query
+    const query = await postModel.findOne({ postid: req.params.postId });
+
+    const postReturn = {
+      user: query.user,
+      title: query.title,
+      topic: query.topic,
+      content: query.content,
+      votes: query.votes,
+      postid: query.postid,
+      created: query.created,
+    };
+
     return res.send({ postReturn });
   } catch (error) {
     console.log(error);
@@ -31,13 +41,12 @@ router.post("/new", async (req, res) => {
     const postid = uuidv4();
 
     const user = await getUserId(req.headers.authorization);
-    const time = getTime();
 
     const post = new postModel({
       user: user,
       title: req.body.title,
       topic: req.body.topic,
-      create: time,
+      created: Date.now(),
       content: req.body.content,
       embed: req.body.embed,
       votes: 0,

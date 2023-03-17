@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 import styles from "./styles.module.css";
 
@@ -22,13 +21,7 @@ const Login = () => {
   // CHECK IF USER IS ALREADY LOGGED IN
 
   useEffect(() => {
-    const isLogged = async () => {
-      const loggedIn = await getUserName();
-      console.log(loggedIn);
-      return loggedIn;
-    };
-
-    isLogged().then((data) => {
+    getUserName(localStorage.getItem("token")).then((data) => {
       if (data) {
         navigate("/");
       }

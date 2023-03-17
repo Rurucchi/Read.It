@@ -1,6 +1,10 @@
 import * as React from "react";
+
+// react router stuff
 import { Outlet, Link, Navigate, useNavigate } from "react-router-dom";
 import { styled, alpha } from "@mui/material/styles";
+
+// mui stuff
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -18,9 +22,13 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import CodeOffIcon from "@mui/icons-material/CodeOff";
 import AddIcon from "@mui/icons-material/Add";
+import Button from '@mui/material/Button';
 
 // API STUFF
 import Logout from "../../api/user/logout";
+import { useState, useEffect } from "react";
+import getUserName from "../../api/user/me";
+
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -65,6 +73,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function PrimarySearchAppBar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+
+  let isLogged = false;
+  useEffect(() => {
+   isLogged = getUserName();
+  }, []);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -128,40 +141,61 @@ export default function PrimarySearchAppBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton
-          size="large"
-          aria-label="show 17 new notifications"
-          color="inherit"
-        >
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem>
-    </Menu>
+      
+      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+      <MenuItem onClick={() => {Logout(); handleMenuClose(); navigate("/login")}}>Logout</MenuItem>
+      </Menu>
   );
+
+  const LoginButton = () => {
+    return (
+    <div>
+      <Link to="/login">
+      <Button variant="contained">Login</Button>
+      </Link>
+    </div>
+    )
+  }
+
+  const AccountManagement = () => {
+    return(<div>
+    <Box sx={{ display: { xs: "none", md: "flex" } }}>
+      {/* <IconButton
+        size="large"
+        aria-label="show 17 new notifications"
+        color="inherit"
+      >
+        <Badge badgeContent={0} color="error">
+          <NotificationsIcon />
+        </Badge>
+      </IconButton> */}
+      <IconButton
+        size="large"
+        edge="end"
+        aria-label="account of current user"
+        aria-controls={menuId}
+        aria-haspopup="true"
+        onClick={handleProfileMenuOpen}
+        color="inherit"
+      >
+        <AccountCircle />
+      </IconButton>
+    </Box>
+    <Box sx={{ display: { xs: "flex", md: "none" } }}>
+      <IconButton
+        size="large"
+        aria-label="show more"
+        aria-controls={mobileMenuId}
+        aria-haspopup="true"
+        onClick={handleMobileMenuOpen}
+        color="inherit"
+      >
+        <MoreIcon />
+      </IconButton>
+    </Box>
+    </div>)
+  }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -202,40 +236,8 @@ export default function PrimarySearchAppBar() {
             </IconButton>
           </Link>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={0} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </Box>
-          <Box sx={{ display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </Box>
+          {isLogged && AccountManagement()}
+          {!isLogged && LoginButton()}
         </Toolbar>
       </AppBar>
       {renderMobileMenu}
