@@ -5,7 +5,7 @@ import SendIcon from "@mui/icons-material/Send";
 export default function UploadButton({ onClick }) {
   return (
     <Button variant="contained" endIcon={<SendIcon />} onClick={onClick}>
-      Send
+      Save
     </Button>
   );
 }

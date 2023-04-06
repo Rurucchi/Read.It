@@ -14,6 +14,7 @@ import SigninButton from "../../../components/userComponents/buttons/signinButto
 // API REQUESTS
 import CreateUserRequest from "../../../api/user/createUserRequest";
 import LoginRequest from "../../../api/user/loginRequest.js";
+import getUserName from "../../../api/user/me";
 
 const Signin = () => {
   // Hooks

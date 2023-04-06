@@ -27,7 +27,7 @@ router.get("/view/:postId", async (req, res) => {
       created: query.created,
     };
 
-    return res.send({ postReturn });
+    return res.send(postReturn);
   } catch (error) {
     console.log(error);
     res.status(404).send("Post not found!");
@@ -40,7 +40,7 @@ router.post("/new", async (req, res) => {
   try {
     const postid = uuidv4();
 
-    const user = await getUserId(req.headers.authorization);
+    const user = getUserId(req.headers.authorization);
 
     const post = new postModel({
       user: user,
@@ -94,7 +94,7 @@ router.patch("/edit/:postId", async (req, res) => {
   // edit post
   try {
     console.log(user);
-    console.log(query.user);
+    console.log(req.params.postId);
     if (user === query.user) {
       query.title = req.body.title;
       query.topic = req.body.topic;
@@ -115,14 +115,18 @@ router.patch("/edit/:postId", async (req, res) => {
 
 // ---------- DELETE POST
 
-router.delete("/delete", async (req, res) => {
+router.delete("/delete/:postId", async (req, res) => {
   // POST
   let post;
 
   try {
-    post = await postModel.findOne({ postid: req.body.postid }).exec();
+    post = await postModel.findOne({ postid: req.params.postId }).exec();
   } catch (error) {
-    res.status(404).send("Post Not Found");
+    return res.status(404).send("Post not found");
+  }
+
+  if (post === null) {
+    return res.status(404).send("Post not found");
   }
 
   let user;
@@ -135,14 +139,14 @@ router.delete("/delete", async (req, res) => {
 
   if (user === post.user) {
     try {
-      await postModel.findOneAndDelete({ postid: req.body.postid }).exec();
+      await postModel.findOneAndDelete({ postid: req.params.postId }).exec();
       return res.status(200).send("Post succesfully deleted!");
     } catch (error) {
       console.log(error);
       return res.status(404);
     }
   } else {
-    return res.status(401);
+    return res.status(401).send("Unauthorized");
   }
 });
 

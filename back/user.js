@@ -35,7 +35,6 @@ router.post("/me", async (req, res) => {
         //token parsing
         let token = req.headers.authorization;
         console.log(token);
-        token = token.slice(7);
 
         // jwt stuff
         const decoded = jwt.verify(token, jwtSecretKey);
@@ -49,6 +48,16 @@ router.post("/me", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(501).send("Internal Server Error");
+  }
+});
+
+// ---------------------- get user with id
+router.get("/get/:id", async (req, res) => {
+  try {
+    const query = await userModel.findOne({ uid: req.params.id });
+    return res.status(200).send({ user: query.name });
+  } catch (error) {
+    return res.status(404).send();
   }
 });
 
@@ -141,7 +150,6 @@ router.patch("/update", async (req, res) => {
       // token parsing + params
       let token = req.headers.authorization;
       console.log(token);
-      token = token.slice(7);
 
       // jwt stuff
       const decoded = jwt.verify(token, jwtSecretKey);
@@ -183,17 +191,26 @@ router.patch("/update", async (req, res) => {
 router.delete("/delete", async (req, res) => {
   try {
     let token = req.headers.authorization;
-    console.log(token);
-    token = token.slice(7);
+    let decoded;
+    try {
+      console.log(token);
 
-    const decoded = jwt.verify(token, jwtSecretKey);
-    console.log(decoded);
+      decoded = jwt.verify(token, jwtSecretKey);
+      console.log(decoded);
+    } catch (error) {
+      return res.status(401).send("Unauthorized");
+    }
 
-    await userModel.findOneAndDelete({ uid: decoded.userId });
-
-    return res.status(200).send("User successfully deleted!");
+    try {
+      let success = await userModel.findOneAndDelete({ uid: decoded.userId });
+      console.log(success);
+      return res.status(200).send("User successfully deleted!");
+    } catch (error) {
+      return res.status(404).send("User does not exist");
+    }
   } catch (error) {
     console.log(error);
+    return res.status(501).send("Internal server error");
   }
 });
 

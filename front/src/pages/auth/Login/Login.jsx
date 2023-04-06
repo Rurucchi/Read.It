@@ -1,7 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
 import styles from "./styles.module.css";
+
+// TODO : RESOLVE WARNING
+
+// CONTEXT
+import { AuthContext } from "../../../context/AuthContext";
 
 // Components
 import CredsField from "../../../components/userComponents/fields/credsField";
@@ -10,30 +15,28 @@ import LoginButton from "../../../components/userComponents/buttons/loginButton"
 
 //API REQUEST
 import LoginRequest from "../../../api/user/loginRequest";
-import getUserName from "../../../api/user/me";
+import tryLogin from "../../../api/user/tryLogin";
 
 // OTHER FUNCTIONS
 
 const Login = () => {
   // Hooks
   const navigate = useNavigate();
+  const auth = useContext(AuthContext);
 
   // CHECK IF USER IS ALREADY LOGGED IN
-
-  useEffect(() => {
-    getUserName(localStorage.getItem("token")).then((data) => {
-      if (data) {
-        navigate("/");
-      }
-    });
-  }, []);
-
   const [creds, setCreds] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleClick = (e) => {
-    const loginSuccess = LoginRequest(creds, password);
+  if (auth.authState) {
+    return navigate("/");
+  }
+
+  const handleClick = async (e) => {
+    const loginSuccess = await LoginRequest(creds, password);
     if (loginSuccess) {
+      console.log(loginSuccess);
+      auth.setAuthState(true);
       navigate("/");
     }
   };

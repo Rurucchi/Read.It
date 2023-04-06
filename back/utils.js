@@ -12,9 +12,12 @@ const tokenLogin = async (req, res, next) => {
   // console.log(req.aut);
 
   try {
-    const rawToken = req.header("authorization");
+    const rawToken = req.headers.authorization;
+    console.log(rawToken);
 
-    const token = rawToken.replace("Bearer ", "");
+    const token = rawToken;
+
+    // .replace("Bearer ", "")                                  in case
 
     // console.log(token);
     const verified = await jwt.verify(token, jwtSecretKey);
@@ -37,9 +40,8 @@ const tokenLogin = async (req, res, next) => {
 
 // USER VERIF & USER RELATED STUFF
 
-async function getUserId(userToken) {
-  token = userToken.slice(7);
-  const decoded = jwt.verify(token, jwtSecretKey);
+function getUserId(userToken) {
+  const decoded = jwt.verify(userToken, jwtSecretKey);
 
   return decoded.userId;
 }
