@@ -27,6 +27,7 @@ const Login = () => {
   // CHECK IF USER IS ALREADY LOGGED IN
   const [creds, setCreds] = useState("");
   const [password, setPassword] = useState("");
+  const [loaded, setLoaded] = useState(false);
 
   if (auth.authState) {
     return navigate("/");
@@ -50,6 +51,9 @@ const Login = () => {
         onChange={(e) => setPassword(e.target.value)}
       />
       <LoginButton onClick={handleClick} />
+      <p>
+        No account? <a href="/signin">Register</a>
+      </p>
     </div>
   );
 };

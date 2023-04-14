@@ -1,5 +1,7 @@
-import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+// TODO : make an actual UI 😂
+
+import { useParams, Navigate, useNavigate } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
 
 // ui elements
 import PostBox from "../../../components/postComponents/post-ui/postBox/postBox";
@@ -11,10 +13,14 @@ import searchUserWithUID from "../../../api/user/getUsername";
 //css
 import styles from "./styles.module.css";
 
+// context stuff
+import { AuthContext } from "../../../context/AuthContext";
+
 const PostView = () => {
   //hooks
-  const [loaded, setLoaded] = useState(false);
 
+  // states
+  const [loaded, setLoaded] = useState(false);
   const [topic, setTopic] = useState("");
   const [title, setTitle] = useState("");
   const [user, setUser] = useState("");
@@ -22,6 +28,13 @@ const PostView = () => {
   const [votes, setVotes] = useState("");
   const [embed, setEmbed] = useState("");
 
+  // router
+  const navigate = useNavigate();
+
+  //auth
+  const auth = useContext(AuthContext);
+
+  // params
   let { id } = useParams();
 
   useEffect(() => {

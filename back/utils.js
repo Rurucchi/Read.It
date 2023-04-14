@@ -22,8 +22,6 @@ const tokenLogin = async (req, res, next) => {
     // console.log(token);
     const verified = await jwt.verify(token, jwtSecretKey);
 
-    console.log(verified);
-
     if (verified) {
       req.user = verified; // req.user includes verified
     } else {

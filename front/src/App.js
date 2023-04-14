@@ -25,7 +25,7 @@ import UserPage from "./pages/user/userPage";
 
 // --------- Auth pages
 import Login from "./pages/auth/Login/Login";
-import Signin from "./pages/auth/Signin/Signin";
+import Register from "./pages/auth/Register/Register";
 
 // --------- Context variables
 import { AuthContext } from "./context/AuthContext";
@@ -40,7 +40,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />}></Route>
-          <Route path="/signin" element={<Signin />}></Route>
+          <Route path="/signin" element={<Register />}></Route>
           <Route path="/" element={<Home />}>
             <Route path="/topic" element={<TopicPage />}></Route>
             <Route path="/post" element={<PostContainer />}>

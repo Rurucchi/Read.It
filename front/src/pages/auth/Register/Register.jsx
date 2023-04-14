@@ -9,14 +9,14 @@ import { Stack } from "@mui/system";
 import NameField from "../../../components/userComponents/fields/nameField";
 import CredsField from "../../../components/userComponents/fields/credsField";
 import PasswordField from "../../../components/userComponents/fields/passwordField";
-import SigninButton from "../../../components/userComponents/buttons/signinButton";
+import RegisterButton from "../../../components/userComponents/buttons/registerButton";
 
 // API REQUESTS
 import CreateUserRequest from "../../../api/user/createUserRequest";
 import LoginRequest from "../../../api/user/loginRequest.js";
 import getUserName from "../../../api/user/me";
 
-const Signin = () => {
+const Register = () => {
   // Hooks
   const navigate = useNavigate();
 
@@ -36,16 +36,16 @@ const Signin = () => {
   return (
     <div>
       <Stack>
-        <h1>Sign-in</h1>
+        <h1>Register</h1>
         <NameField value={name} onChange={(e) => setName(e.target.value)} />
         <PasswordField
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <SigninButton onClick={handleClick} />
+        <RegisterButton onClick={handleClick} />
       </Stack>
     </div>
   );
 };
 
-export default Signin;
+export default Register;
