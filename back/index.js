@@ -2,13 +2,19 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
+// server stuff needed
 const express = require("express");
 const app = express();
 const port = 4000;
 const mongoose = require("mongoose");
 const cors = require("cors");
+
+// define routes
 const postRouter = require("./post");
 const userRouter = require("./user");
+const queryRouter = require("./postQuery");
+
+// utils and jwt
 const jwt = require("jsonwebtoken");
 const { tokenLogin } = require("./utils.js");
 
@@ -33,6 +39,7 @@ app.use((req, res, next) => {
 // Routes
 app.use("/post", tokenLogin, postRouter, cors());
 app.use("/user", userRouter, cors());
+app.use("/search", queryRouter, cors());
 
 // do not touch
 app.listen(port, () => {
