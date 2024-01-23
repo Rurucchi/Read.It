@@ -1,4 +1,3 @@
-const { time } = require("discord.js");
 const mongoose = require("mongoose");
 
 // SCHEMES
