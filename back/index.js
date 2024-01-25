@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(cors());
 
 async function main() {
-  await mongoose.connect("mongodb://127.0.0.1:27017/ReadIt");
+  await mongoose.connect(process.env.MONGOURL);
 }
 
 main().catch((err) => console.log(err));

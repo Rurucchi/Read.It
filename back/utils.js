@@ -15,9 +15,13 @@ const tokenLogin = async (req, res, next) => {
     const rawToken = req.headers.authorization;
     console.log(rawToken);
 
-    const token = rawToken;
-
-    // .replace("Bearer ", "")                                  in case
+    const reg = new RegExp("Bearer ");
+    let token;
+    if (reg.test(rawToken)) {
+      token = rawToken.replace("Bearer ", "");
+    } else {
+      token = rawToken;
+    }
 
     // console.log(token);
     const verified = await jwt.verify(token, jwtSecretKey);

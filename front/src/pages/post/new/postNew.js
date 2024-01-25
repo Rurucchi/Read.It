@@ -21,10 +21,17 @@ const PostNew = () => {
   // REQUEST TO THE API
 
   const handleClick = async (e) => {
-    const postSuccess = await createPost(title, content, topic);
-    if (postSuccess.status === 200) {
-      navigate("/");
-    }
+    createPost(title, content, topic).then(async (res) => {
+      if (res.status === 200) {
+        console.log(res);
+        await res.json().then((data) => {
+          console.log(data);
+          alert(`your post id : ${data.postid}`);
+        });
+      } else {
+        alert("server error.");
+      }
+    });
   };
 
   return (

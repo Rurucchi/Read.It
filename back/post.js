@@ -54,7 +54,7 @@ router.post("/new", async (req, res) => {
     });
 
     await post.save();
-    return res.status(200).send("Post sent!");
+    return res.status(200).send({ postid: postid });
   } catch (error) {
     console.log(error);
     res.status(400).send();

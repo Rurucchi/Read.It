@@ -13,7 +13,7 @@ async function createPost(title, content, topic) {
 
     console.log(data);
 
-    return true;
+    return result;
   } catch (error) {
     console.log(error);
   }

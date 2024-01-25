@@ -33,8 +33,6 @@ import { AuthContext } from "./context/AuthContext";
 // functions
 import { AuthProvider } from "./context/AuthContext";
 function App() {
-  //HOOKS
-
   return (
     <BrowserRouter>
       <AuthProvider>

@@ -46,8 +46,7 @@ router.post("/me", async (req, res) => {
       res.status(400).send("Not Logged In!");
     }
   } catch (error) {
-    console.log(error);
-    res.status(501).send("Internal Server Error");
+    res.status(401).send("Login expired");
   }
 });
 
@@ -121,7 +120,7 @@ router.post("/login", async (req, res) => {
       return res.status(200).send({ token: token });
     }
 
-    return res.send({ message: "Wrong Credentials!" }).status(400);
+    return res.send({ message: "Wrong Credentials!" }).status(401);
   } catch (error) {
     console.log(error);
   }

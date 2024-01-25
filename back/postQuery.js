@@ -23,23 +23,31 @@ router.get("/:query", async (req, res) => {
       let postFoundId = [];
 
       // first request please dont crash
-      for (let i = 0; i < 3; i++) {
-        let dbQuery = await postModel
-          .findOne({
+      // check if there are found posts already to prevent error
+      let dbQuery;
+      if (postFoundId.length > 0) {
+        dbQuery = await postModel
+          .find({
             title: { $regex: regex, $options: "i" },
             postid: !postFoundId.includes(),
           })
           .exec();
-        console.log(dbQuery);
-        postReturn.push(dbQuery);
-        postFoundId.push(dbQuery.postid);
+      } else {
+        dbQuery = await postModel
+          .find({
+            title: { $regex: regex, $options: "i" },
+          })
+          .exec();
       }
+
+      console.log(dbQuery);
+      return res.status(200).send(dbQuery);
     } catch (error) {
       console.log(error);
+      res.status(400).send("Bad Request");
     }
 
     // return
-    return res.status(200).send(postReturn);
   } catch (error) {
     console.log(error);
     res.status(400).send();
